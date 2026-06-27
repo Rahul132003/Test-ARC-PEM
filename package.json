@@ -1,6 +1,6 @@
 {
   "name": "arch-budget-calculator",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Offline Desktop Project Expense Manager for Architecture Consultancy",
   "private": true,
   "main": "dist-electron/main.js",
