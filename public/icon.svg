@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- Background deep indigo gradient -->
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#312e81"/>
+      <stop offset="60%" stop-color="#1e1b4b"/>
+      <stop offset="100%" stop-color="#0f0e2a"/>
+    </linearGradient>
+    <!-- Arch / column gradient (top-light) -->
+    <linearGradient id="archGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#e0e7ff"/>
+      <stop offset="100%" stop-color="#818cf8"/>
+    </linearGradient>
+    <!-- Bar gradients -->
+    <linearGradient id="bar1Grad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#c7d2fe"/>
+      <stop offset="100%" stop-color="#6366f1" stop-opacity="0.6"/>
+    </linearGradient>
+    <linearGradient id="bar2Grad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#a5b4fc" stop-opacity="0.7"/>
+    </linearGradient>
+    <linearGradient id="bar3Grad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ddd6fe"/>
+      <stop offset="100%" stop-color="#7c3aed" stop-opacity="0.6"/>
+    </linearGradient>
+    <!-- Glow filter for arch -->
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <!-- Soft shadow -->
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#000" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <!-- ── Background ── -->
+  <rect width="512" height="512" rx="88" ry="88" fill="url(#bgGrad)"/>
+
+  <!-- Subtle dot-grid texture in background -->
+  <g opacity="0.08">
+    <circle cx="80"  cy="80"  r="2" fill="white"/>
+    <circle cx="160" cy="80"  r="2" fill="white"/>
+    <circle cx="240" cy="80"  r="2" fill="white"/>
+    <circle cx="320" cy="80"  r="2" fill="white"/>
+    <circle cx="400" cy="80"  r="2" fill="white"/>
+    <circle cx="80"  cy="160" r="2" fill="white"/>
+    <circle cx="400" cy="160" r="2" fill="white"/>
+    <circle cx="80"  cy="440" r="2" fill="white"/>
+    <circle cx="160" cy="440" r="2" fill="white"/>
+    <circle cx="320" cy="440" r="2" fill="white"/>
+    <circle cx="400" cy="440" r="2" fill="white"/>
+  </g>
+
+  <!-- ── BASE PLATFORM ── -->
+  <rect x="76" y="396" width="360" height="32" rx="10" fill="url(#archGrad)" filter="url(#shadow)" opacity="0.92"/>
+
+  <!-- ── LEFT COLUMN ── -->
+  <rect x="92" y="243" width="48" height="157" rx="8" fill="url(#archGrad)" filter="url(#shadow)"/>
+  <!-- Column cap -->
+  <rect x="76" y="234" width="80" height="16" rx="6" fill="url(#archGrad)"/>
+
+  <!-- ── RIGHT COLUMN ── -->
+  <rect x="372" y="243" width="48" height="157" rx="8" fill="url(#archGrad)" filter="url(#shadow)"/>
+  <!-- Column cap -->
+  <rect x="356" y="234" width="80" height="16" rx="6" fill="url(#archGrad)"/>
+
+  <!-- ── ARCH ARC ──
+       Centers: left=116, right=396 → mid=256, r=140
+       Arc from (116,250) to (396,250) curving up to y≈110
+  -->
+  <path d="M 116 250 A 140 140 0 0 1 396 250"
+        stroke="url(#archGrad)" stroke-width="42"
+        fill="none" stroke-linecap="butt"
+        filter="url(#glow)" opacity="0.95"/>
+
+  <!-- Arch inner shadow line for depth -->
+  <path d="M 124 252 A 132 132 0 0 1 388 252"
+        stroke="#1e1b4b" stroke-width="10"
+        fill="none" stroke-linecap="butt" opacity="0.5"/>
+
+  <!-- ── KEYSTONE ornament at arch apex ── -->
+  <ellipse cx="256" cy="112" rx="22" ry="26" fill="url(#archGrad)" opacity="0.9" filter="url(#glow)"/>
+  <ellipse cx="256" cy="112" rx="14" ry="17" fill="#1e1b4b" opacity="0.6"/>
+
+  <!-- ── BAR CHART (budget bars inside arch) ──
+       Bars sit on base top (y=396), grow upward
+  -->
+  <!-- Bar 1 — left, medium height -->
+  <rect x="154" y="293" width="50" height="103" rx="7" fill="url(#bar1Grad)"/>
+  <!-- Bar 1 highlight -->
+  <rect x="159" y="298" width="14" height="93" rx="4" fill="white" opacity="0.18"/>
+
+  <!-- Bar 2 — center, tallest -->
+  <rect x="231" y="248" width="50" height="148" rx="7" fill="url(#bar2Grad)"/>
+  <!-- Bar 2 highlight -->
+  <rect x="236" y="253" width="14" height="138" rx="4" fill="white" opacity="0.22"/>
+
+  <!-- Bar 3 — right, medium-tall -->
+  <rect x="308" y="268" width="50" height="128" rx="7" fill="url(#bar3Grad)"/>
+  <!-- Bar 3 highlight -->
+  <rect x="313" y="273" width="14" height="118" rx="4" fill="white" opacity="0.18"/>
+
+  <!-- Trend line connecting bar tops -->
+  <polyline points="179,290  256,245  333,265"
+            stroke="#c7d2fe" stroke-width="4"
+            fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.85"/>
+
+  <!-- Trend dots -->
+  <circle cx="179" cy="290" r="6" fill="#e0e7ff" opacity="0.9"/>
+  <circle cx="256" cy="245" r="8" fill="white" opacity="0.95"/>
+  <circle cx="333" cy="265" r="6" fill="#e0e7ff" opacity="0.9"/>
+
+  <!-- ── Small ₹ tag at top-right corner ── -->
+  <rect x="368" y="52" width="76" height="76" rx="20" fill="#4f46e5" opacity="0.85"/>
+  <text x="406" y="104" text-anchor="middle"
+        font-size="44" font-family="Arial Unicode MS, DejaVu Sans, sans-serif"
+        font-weight="bold" fill="white" opacity="0.95">₹</text>
+</svg>

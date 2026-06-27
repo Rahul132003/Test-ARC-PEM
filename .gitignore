@@ -1,0 +1,10 @@
+node_modules
+dist
+dist-electron
+release
+*.db
+.DS_Store
+
+# License system — NEVER commit these
+scripts/license-private.pem
+licenses/
