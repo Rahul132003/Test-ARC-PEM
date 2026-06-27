@@ -90,8 +90,8 @@
     },
     "publish": {
       "provider": "github",
-      "owner": "hashxlabs",
-      "repo": "projex-releases"
+      "owner": "Rahul132003",
+      "repo": "my-release"
     }
   }
 }
