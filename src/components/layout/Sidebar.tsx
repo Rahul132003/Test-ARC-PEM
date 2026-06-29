@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import {
   HiOutlineRectangleStack,
   HiOutlineSquare3Stack3D,
@@ -11,9 +11,14 @@ import {
   HiOutlineBars3,
   HiOutlineXMark,
   HiOutlineLockClosed,
+  HiOutlineDocumentText,
+  HiOutlineClipboardDocumentList,
+  HiOutlineUsers,
+  HiOutlineWrenchScrewdriver,
+  HiOutlineTrash,
 } from 'react-icons/hi2';
 import { usePlanFeature, usePlanTier } from '@/context/LicenseContext';
-import { PLAN_DISPLAY_NAMES, PLAN_COLORS } from '@/types';
+import { PLAN_DISPLAY_NAMES, PLAN_COLORS, RecentActivity } from '@/types';
 
 const mainNav = [
   { to: '/dashboard', label: 'Dashboard', icon: HiOutlineChartBarSquare },
@@ -163,6 +168,80 @@ function ReportsNavGroup({ collapsed }: { collapsed: boolean }) {
   );
 }
 
+const ACTIVITY_ICONS: Record<string, React.ElementType> = {
+  expenses:        HiOutlineReceiptPercent,
+  summary:         HiOutlineClipboardDocumentList,
+  budget:          HiOutlineDocumentText,
+  'ledger/labour': HiOutlineUsers,
+  'ledger/vendor': HiOutlineWrenchScrewdriver,
+};
+
+function timeAgo(iso: string): string {
+  const diff = Math.floor((Date.now() - new Date(iso + 'Z').getTime()) / 1000);
+  if (diff < 60)    return 'just now';
+  if (diff < 3600)  return `${Math.floor(diff / 60)}m ago`;
+  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+  return `${Math.floor(diff / 86400)}d ago`;
+}
+
+function RecentActivityGroup({ collapsed }: { collapsed: boolean }) {
+  const [items, setItems] = useState<RecentActivity[]>([]);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    window.electronAPI.getRecentActivity(5).then(setItems);
+  }, [location.pathname]);
+
+  if (items.length === 0) return null;
+
+  return (
+    <div>
+      {!collapsed && (
+        <div className="flex items-center justify-between px-4 pt-4 pb-2">
+          <p className="section-label !p-0">Recent</p>
+          <button
+            onClick={() => window.electronAPI.clearActivity().then(() => setItems([]))}
+            title="Clear recent activity"
+            className="p-0.5 rounded hover:text-rose-500 transition-colors"
+            style={{ color: 'var(--text-muted)' }}
+          >
+            <HiOutlineTrash className="w-3 h-3" />
+          </button>
+        </div>
+      )}
+      {collapsed && <div className="pt-3" />}
+
+      {items.map((item) => {
+        const Icon = ACTIVITY_ICONS[item.type] ?? HiOutlineDocumentText;
+        return (
+          <button
+            key={item.id}
+            onClick={() => navigate(item.route)}
+            title={collapsed ? `${item.project_name} — ${item.sub_label}` : undefined}
+            className={`w-full sidebar-item ${collapsed ? 'justify-center px-2' : ''}`}
+          >
+            <Icon className="w-5 h-5 shrink-0" />
+            {!collapsed && (
+              <>
+                <div className="flex-1 min-w-0 text-left">
+                  <p className="truncate text-xs font-semibold leading-tight">{item.project_name}</p>
+                  <p className="truncate text-[10px] leading-tight" style={{ color: 'var(--text-muted)' }}>
+                    {item.sub_label}
+                  </p>
+                </div>
+                <span className="text-[10px] shrink-0" style={{ color: 'var(--text-muted)' }}>
+                  {timeAgo(item.accessed_at)}
+                </span>
+              </>
+            )}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 export default function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
 
@@ -212,6 +291,7 @@ export default function Sidebar() {
         <NavGroup label="Main"      items={mainNav}      collapsed={collapsed} />
         <ReportsNavGroup                                  collapsed={collapsed} />
         <NavGroup label="Directory" items={directoryNav} collapsed={collapsed} />
+        <RecentActivityGroup collapsed={collapsed} />
       </nav>
 
       {/* Footer — plan badge + offline indicator */}

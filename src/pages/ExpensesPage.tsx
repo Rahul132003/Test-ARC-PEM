@@ -19,6 +19,7 @@ import {
 import MonthPicker from '@/components/MonthPicker';
 import { Project, Expense, Vendor } from '@/types';
 import { formatCurrency, generateId, formatDateISO } from '@/lib/calculations';
+import { useLogActivity } from '@/hooks/useLogActivity';
 
 const COLORS = {
   indigo: { iconBg: 'bg-indigo-100', iconText: 'text-indigo-600' },
@@ -207,6 +208,7 @@ export default function ExpensesPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [project, setProject] = useState<Project | null>(null);
+  useLogActivity(id, project, 'expenses', 'Expenses');
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [loading, setLoading] = useState(true);
   const [directoryVendors, setDirectoryVendors] = useState<Vendor[]>([]);

@@ -1,6 +1,6 @@
 {
   "name": "arch-budget-calculator",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Offline Desktop Project Expense Manager for Architecture Consultancy",
   "private": true,
   "main": "dist-electron/main.js",
@@ -62,7 +62,7 @@
     ],
     "mac": {
       "target": "dmg",
-      "icon": "public/icon.png"
+      "icon": "public/arc-icon.png"
     },
     "win": {
       "target": [
@@ -74,7 +74,7 @@
           ]
         }
       ],
-      "icon": "public/icon.png",
+      "icon": "public/arc-icon.png",
       "artifactName": "${productName}-Setup-${version}-${arch}.${ext}"
     },
     "nsis": {
@@ -90,8 +90,9 @@
     },
     "publish": {
       "provider": "github",
-      "owner": "hashxlabs",
-      "repo": "projex-releases"
+      "owner": "Rahul132003",
+      "repo": "my-release",
+      "releaseType": "release"
     }
   }
 }

@@ -26,6 +26,7 @@ import {
 } from 'react-icons/hi2';
 import MonthPicker from '@/components/MonthPicker';
 import { Project, Expense, ManpowerReport } from '@/types';
+import { useLogActivity } from '@/hooks/useLogActivity';
 import { formatCurrency, generateId, formatDateISO } from '@/lib/calculations';
 import { getExportMetadata } from '@/lib/export-utils';
 import { useToast } from '@/context/ToastContext';
@@ -72,6 +73,7 @@ export default function LabourLedgerPage() {
   const [dateTo,   setDateTo]   = useState(new Date(now.getFullYear() + 1, 11, 31).toISOString().split('T')[0]);
 
   const [project,        setProject]        = useState<Project | null>(null);
+  useLogActivity(id, project, 'ledger/labour', 'Labour Ledger');
   const [expenses,       setExpenses]       = useState<Expense[]>([]);
   const [loading,        setLoading]        = useState(true);
   const [showModal,      setShowModal]      = useState(false);

@@ -210,6 +210,17 @@ export interface ManpowerReport {
   error?: string;
 }
 
+export interface RecentActivity {
+  id: string;
+  type: string;
+  project_id: string;
+  project_name: string;
+  client_name: string;
+  sub_label: string;
+  route: string;
+  accessed_at: string;
+}
+
 export interface ElectronAPI {
   platform: string;
   getProjects: () => Promise<Project[]>;
@@ -318,6 +329,11 @@ export interface ElectronAPI {
   checkForUpdates: () => Promise<void>;
   installUpdate: () => Promise<void>;
   onUpdaterStatus: (cb: (status: UpdaterStatus) => void) => () => void;
+
+  // Recent Activity
+  logActivity: (entry: Partial<RecentActivity>) => Promise<{ success: boolean }>;
+  getRecentActivity: (limit?: number) => Promise<RecentActivity[]>;
+  clearActivity: () => Promise<{ success: boolean }>;
 }
 
 export interface LicenseStatus {
