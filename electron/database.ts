@@ -176,6 +176,18 @@ function createTables() {
       created_at      TEXT DEFAULT (datetime('now')),
       UNIQUE(project_id, vendor_name)
     );
+
+    CREATE TABLE IF NOT EXISTS recent_activity (
+      id           TEXT PRIMARY KEY,
+      type         TEXT NOT NULL,
+      project_id   TEXT NOT NULL,
+      project_name TEXT NOT NULL,
+      client_name  TEXT NOT NULL DEFAULT '',
+      sub_label    TEXT NOT NULL DEFAULT '',
+      route        TEXT NOT NULL,
+      accessed_at  TEXT DEFAULT (datetime('now')),
+      UNIQUE(type, project_id)
+    );
   `);
 
   // ── Project-level column migrations ──────────────────────────────────────

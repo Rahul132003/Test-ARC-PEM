@@ -1263,6 +1263,42 @@ function registerIpcHandlers() {
   ipcMain.handle('window:close', () => { mainWindow?.close(); });
   ipcMain.handle('window:isMaximized', () => mainWindow?.isMaximized() ?? false);
 
+  // ========== RECENT ACTIVITY ==========
+  ipcMain.handle('activity:log', (_event, entry: {
+    type: string; project_id: string; project_name: string;
+    client_name?: string; sub_label?: string; route: string;
+  }) => {
+    const d = getDatabase();
+    d.prepare(`
+      INSERT INTO recent_activity (id, type, project_id, project_name, client_name, sub_label, route, accessed_at)
+      VALUES (lower(hex(randomblob(8))), ?, ?, ?, ?, ?, ?, datetime('now'))
+      ON CONFLICT(type, project_id) DO UPDATE SET
+        project_name = excluded.project_name,
+        client_name  = excluded.client_name,
+        sub_label    = excluded.sub_label,
+        route        = excluded.route,
+        accessed_at  = datetime('now')
+    `).run(entry.type, entry.project_id, entry.project_name, entry.client_name ?? '', entry.sub_label ?? '', entry.route);
+    // Cap at 20 most-recent entries
+    d.prepare(`
+      DELETE FROM recent_activity WHERE id NOT IN (
+        SELECT id FROM recent_activity ORDER BY accessed_at DESC LIMIT 20
+      )
+    `).run();
+    return { success: true };
+  });
+
+  ipcMain.handle('activity:getRecent', (_event, limit: number = 10) =>
+    getDatabase()
+      .prepare('SELECT * FROM recent_activity ORDER BY accessed_at DESC LIMIT ?')
+      .all(limit)
+  );
+
+  ipcMain.handle('activity:clear', () => {
+    getDatabase().prepare('DELETE FROM recent_activity').run();
+    return { success: true };
+  });
+
   // ========== APP INFO ==========
   ipcMain.handle('app:getVersion', () => app.getVersion());
 

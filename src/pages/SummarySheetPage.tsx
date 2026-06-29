@@ -5,6 +5,7 @@ import { exportExpensesToExcel } from '@/lib/excel-export';
 import { getExportMetadata } from '@/lib/export-utils';
 import { useToast } from '@/context/ToastContext';
 import { Project, Expense } from '@/types';
+import { useLogActivity } from '@/hooks/useLogActivity';
 import MonthPicker from '@/components/MonthPicker';
 import {
   HiOutlineArrowLeft,
@@ -41,6 +42,7 @@ export default function SummarySheetPage() {
   const navigate = useNavigate();
 
   const [project, setProject] = useState<Project | null>(null);
+  useLogActivity(id, project, 'summary', 'Summary Sheet');
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [loading, setLoading] = useState(true);
   const { showSuccess } = useToast();

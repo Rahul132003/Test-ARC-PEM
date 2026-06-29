@@ -12,6 +12,7 @@ import {
   HiOutlinePrinter,
 } from 'react-icons/hi2';
 import { Project, Category, BudgetSummaryData, Template } from '@/types';
+import { useLogActivity } from '@/hooks/useLogActivity';
 import { formatCurrency, formatNumber, calculateBudgetSummary, generateId } from '@/lib/calculations';
 import CategorySection from '@/components/budget/CategorySection';
 import BudgetCharts from '@/components/reports/BudgetCharts';
@@ -22,6 +23,7 @@ export default function BudgetEditorPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [project, setProject] = useState<Project | null>(null);
+  useLogActivity(id, project, 'budget', 'Budget Editor');
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [showEditModal, setShowEditModal] = useState(false);

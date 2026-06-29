@@ -126,6 +126,11 @@ contextBridge.exposeInMainWorld('electronAPI', {
   closeWindow:     ()   => ipcRenderer.invoke('window:close'),
   isMaximized:     ()   => ipcRenderer.invoke('window:isMaximized'),
 
+  // ── Recent Activity ──────────────────────────────────────────────────────────
+  logActivity:       (entry: any)          => ipcRenderer.invoke('activity:log', entry),
+  getRecentActivity: (limit?: number)      => ipcRenderer.invoke('activity:getRecent', limit),
+  clearActivity:     ()                    => ipcRenderer.invoke('activity:clear'),
+
   // ── App Info ─────────────────────────────────────────────────────────────────
   getAppVersion: () => ipcRenderer.invoke('app:getVersion'),
 

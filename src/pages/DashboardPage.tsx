@@ -10,8 +10,14 @@ import {
   HiOutlineExclamationCircle,
   HiOutlineArrowTrendingUp,
   HiOutlineCalendarDays,
+  HiOutlineClock,
+  HiOutlineReceiptPercent,
+  HiOutlineClipboardDocumentList,
+  HiOutlineDocumentText,
+  HiOutlineUsers,
+  HiOutlineWrenchScrewdriver,
 } from 'react-icons/hi2';
-import { DashboardStats } from '@/types';
+import { DashboardStats, RecentActivity } from '@/types';
 import { useApp } from '@/context/AppContext';
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -98,6 +104,83 @@ const PERIODS: { value: Period; label: string }[] = [
   { value: 'all',          label: 'All Time' },
 ];
 
+const ACTIVITY_ICONS: Record<string, React.ReactNode> = {
+  expenses:       <HiOutlineReceiptPercent className="w-4 h-4" />,
+  summary:        <HiOutlineClipboardDocumentList className="w-4 h-4" />,
+  budget:         <HiOutlineDocumentText className="w-4 h-4" />,
+  'ledger/labour':<HiOutlineUsers className="w-4 h-4" />,
+  'ledger/vendor':<HiOutlineWrenchScrewdriver className="w-4 h-4" />,
+};
+
+const ACTIVITY_COLORS: Record<string, string> = {
+  expenses:        'bg-indigo-100 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-400',
+  summary:         'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/40 dark:text-emerald-400',
+  budget:          'bg-violet-100 text-violet-600 dark:bg-violet-900/40 dark:text-violet-400',
+  'ledger/labour': 'bg-amber-100 text-amber-600 dark:bg-amber-900/40 dark:text-amber-400',
+  'ledger/vendor': 'bg-sky-100 text-sky-600 dark:bg-sky-900/40 dark:text-sky-400',
+};
+
+function timeAgo(iso: string): string {
+  const diff = Math.floor((Date.now() - new Date(iso + 'Z').getTime()) / 1000);
+  if (diff < 60)   return 'just now';
+  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+  return `${Math.floor(diff / 86400)}d ago`;
+}
+
+function RecentActivitySection({ navigate }: { navigate: (r: string) => void }) {
+  const [items, setItems] = useState<RecentActivity[]>([]);
+
+  useEffect(() => {
+    window.electronAPI.getRecentActivity(8).then(setItems);
+  }, []);
+
+  if (items.length === 0) return null;
+
+  return (
+    <div className="glass-card p-5">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <HiOutlineClock className="w-4 h-4 text-indigo-500" />
+          <h2 className="text-sm font-bold text-slate-700 dark:text-slate-300" style={{ fontFamily: 'Manrope, sans-serif' }}>
+            Recent Activity
+          </h2>
+        </div>
+        <button
+          onClick={() => window.electronAPI.clearActivity().then(() => setItems([]))}
+          className="text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+        >
+          Clear
+        </button>
+      </div>
+      <div className="space-y-1">
+        {items.map((item) => (
+          <button
+            key={item.id}
+            onClick={() => navigate(item.route)}
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-indigo-50/60 dark:hover:bg-indigo-900/10 transition-colors text-left group"
+          >
+            <span className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${ACTIVITY_COLORS[item.type] ?? 'bg-slate-100 text-slate-500'}`}>
+              {ACTIVITY_ICONS[item.type] ?? <HiOutlineDocumentText className="w-4 h-4" />}
+            </span>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 truncate">
+                {item.project_name}
+              </p>
+              <p className="text-xs text-slate-400 truncate">
+                {item.sub_label}{item.client_name ? ` · ${item.client_name}` : ''}
+              </p>
+            </div>
+            <span className="text-xs text-slate-400 shrink-0 group-hover:text-indigo-500 transition-colors">
+              {timeAgo(item.accessed_at)}
+            </span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function DashboardPage() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [period, setPeriod] = useState<Period>('all');
@@ -170,6 +253,9 @@ export default function DashboardPage() {
           color="icon-sq-amber"
         />
       </div>
+
+      {/* Recent Activity */}
+      <RecentActivitySection navigate={navigate} />
 
       {/* Charts row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

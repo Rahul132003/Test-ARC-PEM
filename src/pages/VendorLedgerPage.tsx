@@ -28,6 +28,7 @@ import {
 // xlsx-js-style is loaded dynamically inside handleExportExcel to avoid renderer crash
 import MonthPicker from '@/components/MonthPicker';
 import { Project, Expense, Vendor } from '@/types';
+import { useLogActivity } from '@/hooks/useLogActivity';
 import { generateId, UNIT_OPTIONS, formatDateISO } from '@/lib/calculations';
 import { getExportMetadata } from '@/lib/export-utils';
 import { useToast } from '@/context/ToastContext';
@@ -88,6 +89,7 @@ export default function VendorLedgerPage() {
   const [dateTo,   setDateTo]   = useState(new Date(now.getFullYear() + 1, 11, 31).toISOString().split('T')[0]);
 
   const [project,       setProject]       = useState<Project | null>(null);
+  useLogActivity(id, project, 'ledger/vendor', 'Vendor Ledger');
   const [expenses,      setExpenses]      = useState<Expense[]>([]);
   const [vendors,       setVendors]       = useState<Vendor[]>([]);
   const [loading,       setLoading]       = useState(true);
